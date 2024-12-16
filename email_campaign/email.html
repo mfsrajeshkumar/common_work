@@ -1,0 +1,706 @@
+{% extends 'base.html'%} 
+{% load static %} 
+{% block title %}Contact Us - Email{% endblock %} 
+{% block home-marquee %}
+
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.8.1/nouislider.min.css"
+/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.8.1/nouislider.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/15.8.1/nouislider.js"></script>
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css"
+/>
+<script
+  type="text/javascript"
+  src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"
+></script>
+
+<script
+  type="text/javascript"
+  src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"
+></script>
+
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css"
+/>
+
+<style>
+  .daterangepicker .drp-calendar {
+    max-width: 300px;
+  }
+</style>
+
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="{% static 'css/email.css' %}?v=1.1"
+/>
+
+<script src="{% static 'js/email.js' %}?v=1.38"></script>
+
+<div class="home-container">
+  <div class="image-text-container">
+    <div class="image-home-container">
+      <img
+        src="{% static 'images/planitlocal-email.png' %}"
+        alt="Image Description"
+      />
+    </div>
+    <div class="text-container">
+      <p>
+        99% of consumers check their email every day and it is by far the
+        preferred way to receive updates from brands.
+      </p>
+      <div class="text-home-container">
+        <p><strong>Key Benefits:</strong></p>
+        <ul>
+          <li>Creating personalised content</li>
+          <li>Collecting feedback and surveys</li>
+          <li>Improving sales</li>
+          <li>Communicating with your audience</li>
+          <li>Generating traffic to your site</li>
+          <li>Sending timely campaigns</li>
+          <li>Increasing leads</li>
+          <li>Reaching the right people at the right time</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="text-home-container" style="text-align: center; width: 100%">
+    <div class="form-title">
+      <p>
+        Targeted emails can increase your response rate. Upload your own email
+        list or the planitlocal team can create a list for you based upon
+        customer interests.
+
+        <br />
+
+        Complete the form below to get started and a planitlocal expert will
+        contact you
+      </p>
+    </div>
+
+    <!-- Add the contact form here -->
+    <div class="contact-form" style="margin-top: 2.5rem">
+      <form id="email-form" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="form-row">
+          <div class="form-label">
+            <label for="campaign_name">Campaign Name</label>
+          </div>
+          <div class="form-input input-container">
+            <input
+              type="text"
+              name="campaign_name"
+              class="form-control input-border-color"
+              autocomplete="off"
+              id="campaign_name"
+              required
+            />
+            <ul class="errorlist"></ul>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-label">
+            <label for="campaign_launch_date">Launch Date Of Campaign</label>
+          </div>
+          <div class="form-input input-container">
+            <input
+              type="text"
+              name="daterange"
+              class="input-daterange-timepicker form-control input-border-color"
+              autocomplete="off"
+              id="campaign_launch_date"
+              required
+            />
+            <ul class="errorlist"></ul>
+          </div>
+        </div>
+
+        <div class="wrapper">
+          <div class="accordion">
+            <p class="accordion-header">
+              <label>List Source Selection</label>
+              <span class="accordion-icon">+</span>
+            </p>
+            <div class="accordion-content" id="listSource">
+              <label>
+                <input
+                  type="radio"
+                  name="list_option"
+                  value="option1"
+                  onclick="showForm('form1', 'listSource')"
+                />
+                Use My Mailing List <i>(Select any one)</i>
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="list_option"
+                  value="option2"
+                  onclick="showForm('form2', 'listSource')"
+                />
+                Build Me A List <i>(Select any one)</i>
+              </label>
+              <div id="form1" class="form" style="display: none">
+
+                <div class="form-label">
+                  <label for="upload_email_list">Upload email address list</label>
+                </div>
+      
+                <div class="form-input input-container" id="uploadEmailList">
+                  <div class="input-and-text">
+                    <small style="color: black; margin-bottom: 12px">
+                      Please use
+                      <a
+                        href="{% get_static_prefix %}sample/email/sample_email_list.xlsx"
+                        >this</a
+                      >
+                      format to upload spreadsheet.
+                    </small>
+                    <input
+                      type="file"
+                      name="upload_email_list"
+                      id="file"
+                      onchange="return fileValidation()"
+                    />
+                    <button
+                      type="button"
+                      id="removeFileButton"
+                      style="display: none; margin-left: 0.5rem"
+                    >
+                      Remove File
+                    </button>
+                    <small>* Please upload a file with xlsx extension only.</small>
+                    <ul class="errorlist"></ul>
+                  </div>
+                </div>
+
+              </div>
+              <div id="form2" class="form" style="display: none">
+                <div class="form-row extra-fields" id="extra-fields">
+                  <div class="form-row" style="margin-bottom: 0.5rem">
+                    <div class="form-label">
+                      <label for="location">Location</label>
+                    </div>
+                    <div
+                      class="form-input input-container"
+                      style="display: flex; flex-direction: column"
+                    >
+                      <div style="display: flex; gap: 2rem">
+                        <input
+                          type="text"
+                          name="street_address"
+                          placeholder="Street Address"
+                          id="street_address"
+                          class="form-control input-border-color"
+                        />
+                        <input
+                          style="width: 70%"
+                          type="text"
+                          name="city"
+                          placeholder="City"
+                          id="city"
+                          class="form-control input-border-color"
+                        />
+                        <input
+                          style="width: 60%"
+                          type="text"
+                          name="state"
+                          placeholder="State"
+                          id="state"
+                          class="form-control input-border-color"
+                        />
+                        <input
+                          style="width: 40%"
+                          type="text"
+                          name="location_zipcode"
+                          placeholder="Zip Code"
+                          id="location_zipcode"
+                          class="form-control input-border-color"
+                          maxlength="5"
+                        />
+                      </div>
+                      <div
+                        style="
+                          display: flex;
+                          align-items: center;
+                          margin-top: 1rem;
+                          margin-bottom: 1rem;
+                        "
+                      >
+                        <span>OR</span>
+                      </div>
+                      <div style="display: flex; gap: 2rem">
+                        <input
+                          type="text"
+                          name="zipcd_extra"
+                          class="form-control input-border-color"
+                          autocomplete="off"
+                          id="zipcd_extra"
+                          title="Zip code must be of 5 numeric digits"
+                          placeholder="Zip Code Only"
+                          maxlength="5"
+                        />
+                      </div>
+                    </div>
+                  </div>
+        
+                  <div class="form-row">
+                    <div class="form-label">
+                      <label></label>
+                    </div>
+                    <div class="form-input input-container">
+                      <button
+                        style="float: left"
+                        id="validate_address_btn"
+                        class="btn btn-primary btn-maptool"
+                      >
+                        Validate
+                      </button>
+                    </div>
+                  </div>
+        
+                  <div
+                    class="section-filters"
+                    id="create-emailList-filters"
+                    style="display: none"
+                  >
+                    <div class="form-row" style="margin-bottom: 3rem">
+                      <div class="form-label">
+                        <label for="age">Mileage Radius (in miles)</label>
+                      </div>
+                      <div class="form-input input-container">
+                        <div class="range-slider">
+                          <div class="js-nouislider mileageRadius"></div>
+                          <span class="tooltip" id="tooltip"></span>
+                        </div>
+                      </div>
+                    </div>
+        
+                    <div class="section-container">
+                      <div class="section-target-wrapper">
+                        <div class="section-demographic" id="demographicSection">
+                          <input
+                            type="checkbox"
+                            class="section-toggle-checkbox"
+                            onchange="toggleSection(this, 'demographicSection')"
+                          />
+                          <div class="section-inner-content">
+                            <h3 class="section-heading" style="margin-bottom: 4rem">
+                              Target By Demographic:
+                            </h3>
+                            <div class="section-form-row">
+                              <div>
+                                <div class="section-form-label">
+                                  <label for="age">Age (in years)</label>
+                                </div>
+                                <div class="section-input-container">
+                                  <div class="section-range-container">
+                                    <div class="section-slider js-nouislider age"></div>
+                                    <span class="section-tooltip" id="tooltip1"></span>
+                                  </div>
+                                </div>
+                              </div>
+        
+                              <div>
+                                <div class="section-form-label">
+                                  <label for="income">Income</label>
+                                </div>
+                                <div class="section-input-container">
+                                  <div class="section-range-container">
+                                    <div
+                                      class="section-slider js-nouislider income"
+                                    ></div>
+                                    <span class="section-tooltip" id="tooltip2"></span>
+                                  </div>
+                                </div>
+                              </div>
+        
+                              <div class="section-checkbox-wrapper">
+                                <div class="section-checkbox-group">
+                                  <label>Children in HH</label>
+                                </div>
+                                <div class="section-checkbox-inputs">
+                                  <input
+                                    type="checkbox"
+                                    id="children_in_hh_yes"
+                                    name="children_in_hh"
+                                    value="present"
+                                  />
+                                  <label for="children_in_hh_yes">Present</label>
+                                  <input
+                                    type="checkbox"
+                                    id="children_in_hh_no"
+                                    name="children_in_hh"
+                                    value="not present"
+                                  />
+                                  <label for="children_in_hh_no">Not present</label>
+        
+                                  <i class="selection-input">(Select one or both)</i>
+                                </div>
+        
+                                <div class="section-checkbox-group">
+                                  <label>Homeowner</label>
+                                </div>
+                                <div class="section-checkbox-inputs">
+                                  <input
+                                    type="checkbox"
+                                    id="homeowner_owner"
+                                    name="homeowner"
+                                    value="owner"
+                                  />
+                                  <label for="homeowner_owner">Owner</label>
+                                  <input
+                                    type="checkbox"
+                                    id="homeowner_renter"
+                                    name="homeowner"
+                                    value="renter"
+                                  />
+                                  <label for="homeowner_renter">Renter</label>
+                                  <i class="selection-input">(Select one or both)</i>
+                                </div>
+        
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+        
+                        <div class="section-interests" id="interestsSection">
+                          <input
+                            type="checkbox"
+                            class="section-toggle-checkbox"
+                            onchange="toggleSection(this, 'interestsSection')"
+                            checked
+                          />
+                          <div class="section-inner-content">
+                            <h3 class="section-heading" style="margin-bottom: 0">
+                              Target By Interests:
+                            </h3>
+                            <div class="section-form-row">
+                              <table class="section-table">
+                                <tbody>
+                                  <tr>
+                                    <td><input type="radio" name="select-row" /></td>
+                                    <td>Dog Owner</td>
+                                    <td><input type="radio" name="select-row" /></td>
+                                    <td>Gardening</td>
+                                  </tr>
+                                  <tr>
+                                    <td><input type="radio" name="select-row" /></td>
+                                    <td>Cat Owner</td>
+                                    <td><input type="radio" name="select-row" /></td>
+                                    <td>Home Furnishing / Decorating</td>
+                                  </tr>
+                                  <tr>
+                                    <td><input type="radio" name="select-row" /></td>
+                                    <td>Caring for their home</td>
+                                    <td><input type="radio" name="select-row" /></td>
+                                    <td>Dieting / Weight Loss</td>
+                                  </tr>
+                                  <tr>
+                                    <td><input type="radio" name="select-row" /></td>
+                                    <td>Cooking</td>
+                                    <td><input type="radio" name="select-row" /></td>
+                                    <td>Outdoor Enthusiast</td>
+                                  </tr>
+                                  <tr>
+                                    <td><input type="radio" name="select-row" /></td>
+                                    <td>Beauty / Cosmetics</td>
+                                    <td><input type="radio" name="select-row" /></td>
+                                    <td>Travel Cruises</td>
+                                  </tr>
+                                  <tr>
+                                    <td><input type="radio" name="select-row" /></td>
+                                    <td>Purchased Children's Items</td>
+                                    <td><input type="radio" name="select-row" /></td>
+                                    <td>Travel Domestic / Int</td>
+                                  </tr>
+                                  <tr>
+                                    <td><input type="radio" name="select-row" /></td>
+                                    <td>Aerobatic Exercise</td>
+                                    <td><input type="radio" name="select-row" /></td>
+                                    <td>Home Improve Services</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+        
+                    <div class="custom-row">
+                      <div class="custom-label">
+                        <label for="create-list-quantity">List Quantity</label>
+                      </div>
+                      <div class="custom-input">
+                        <input
+                          type="text"
+                          name="create-list-quantity"
+                          autocomplete="off"
+                          class="custom-form-input-class"
+                          id="create-list-quantity"
+                          disabled
+                        />
+                        <ul class="errorlist"></ul>
+                      </div>
+                      <div class="custom-label">
+                        <label for="create-list-cost">Estimated Cost</label>
+                      </div>
+                      <div class="custom-input">
+                        <input
+                          type="text"
+                          name="create-list-cost"
+                          autocomplete="off"
+                          class="custom-form-input-class"
+                          id="create-list-cost"
+                          disabled
+                        />
+                        <ul class="errorlist"></ul>
+                      </div>
+                    </div>
+        
+                    <div class="form-row" style="margin: 15px 20px 20px">
+                      <button
+                        id="apply_filters_btn"
+                        class="btn btn-primary btn-maptool"
+                      >
+                        Apply filters
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-row" id="uploadedListQuantity" style="display: none">
+                <div class="form-label">
+                  <label for="uploaded-email-list-count"
+                    >Uploaded List Quantity:
+                  </label>
+                </div>
+                <div class="form-input input-container">
+                  <input
+                    type="text"
+                    name="total-email-count"
+                    class="form-control input-border-color"
+                    style="width: 25%; float: left"
+                    autocomplete="off"
+                    id="uploaded-email-list-count"
+                    disabled
+                  />
+                  <ul class="errorlist"></ul>
+                </div>
+              </div>
+      
+              <div class="form-row" id="UploadedFileEstCost" style="display: none">
+                <div class="form-label">
+                  <label for="uploaded-email-list-cost">Estimated Cost: </label>
+                </div>
+                <div class="form-input input-container">
+                  <input
+                    type="text"
+                    name="total-email-cost"
+                    class="form-control input-border-color"
+                    style="width: 25%; float: left"
+                    autocomplete="off"
+                    id="uploaded-email-list-cost"
+                    disabled
+                  />
+                  <ul class="errorlist"></ul>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="wrapper">
+          <div class="accordion">
+            <p class="accordion-header">
+              <label>Design Source Selection</label>
+              <span class="accordion-icon">+</span>
+            </p>
+            <div class="accordion-content" id="designSource" style="display: none;">
+              <label>
+                <input
+                  type="radio"
+                  name="design_option"
+                  value="upload_design"
+                  onclick="showForm('form3', 'designSource')"
+                />
+                Upload My Design <i>(Select any one)</i>
+              </label>
+              <label>
+                <input
+                  type="radio"
+                  name="design_option"
+                  value="create_design"
+                  onclick="showForm('form4', 'designSource')"
+                />
+                Create Design For Me <i>(Select any one)</i>
+              </label>
+              <div id="form3" class="form" style="display: none">
+                <div class="form-label">
+                  <label for="upload_email_list">Upload an existing email template/pdf </label>
+                </div>
+      
+                <div class="form-input input-container" id="uploadEmailAddressList">
+                  <div class="input-and-text">
+                    <small style="color: black; margin-bottom: 12px">
+                      Please use
+                      <a
+                        href="{% get_static_prefix %}sample/email/planitlocal-design- sample.pdf"
+                        >this</a
+                      >
+                      format to upload spreadsheet.
+                    </small>
+                    <input
+                      type="file"
+                      name="upload-create-emailAddressList"
+                      id="emailAddressList-file"
+                      onchange="return pdfValidation()"
+                    />
+
+                    <small>* Please upload a file with pdf extension only.</small>
+                    <ul class="errorlist"></ul>
+                  </div>
+                </div>
+                
+              </div>
+
+              <div id="form4" class="form" style="display: none">
+                
+                 <p style="font-size: medium;"> Design Template for me (Additional Cost = $75) </p>
+                  
+
+              </div>
+              <div class="form-row" id="email_fields" style="display: none">
+                <div class="form-label">
+                  <label for="email_text">Add your email text:</label>
+                </div>
+                <div class="form-input input-container">
+                  <textarea
+                    type="text"
+                    name="email_text"
+                    class="form-control input-border-color"
+                    autocomplete="off"
+                    id="email_text"
+                  ></textarea>
+                  <ul class="errorlist"></ul>
+                </div>
+              </div>
+              <p id="email-field-text" style="text-align: center; font-size: larger; display: none;">
+                (Note: A Planitlocal expert will contact you on form submission)</p>
+            </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-label">
+            <label for="extra_email_info"
+              >Any additional comments you want to provide:</label
+            >
+          </div>
+          <div class="form-input input-container">
+            <textarea
+              type="text"
+              name="extra_email_info"
+              class="form-control input-border-color"
+              autocomplete="off"
+              id="extra_email_info"
+            ></textarea>
+            <ul class="errorlist"></ul>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-label"></div>
+          <div class="form-input">
+            {% if request.user.is_authenticated %}
+            <button
+              type="submit"
+              style="float: left"
+              id="form-submit-btn"
+              class="btn btn-primary btn-maptool"
+            >
+              Add To Cart
+            </button>
+            {% else %}
+            <button
+              type="button"
+              style="float: left"
+              id="submit-button"
+              data-toggle="modal"
+              onclick="openLoginModal('email')"
+              class="btn btn-primary btn-maptool"
+            >
+              Add to Cart
+            </button>
+            {% endif %}
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div id="overlay"></div>
+
+  <div class="loader">
+    <i class="fas fa-spinner fa-spin loader-icon"></i>
+    <span class="overlay-text"
+      >Validating address and calculating estimated quantity...</span
+    >
+  </div>
+</div>
+
+<link
+  href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css"
+  rel="stylesheet"
+/>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+
+<style>
+  .select2-container--default .select2-selection--single {
+    text-align: left;
+    border: 1px solid #ccc;
+    border-radius: 9px;
+    min-height: 3.2rem;
+  }
+  .select2-cont3iner--default
+    .select2-selection--single
+    .select2-selection__rendered {
+    line-height: 32px;
+  }
+  .select2-container--default
+    .select2-selection--single
+    .select2-selection__arrow {
+    top: 4px;
+  }
+  .select2-container--default .select2-search--dropdown .select2-search__field {
+    min-height: 1.6rem;
+  }
+</style>
+
+<script>
+  $("#campaign_launch_date").daterangepicker({
+    opens: "center",
+    startDate: moment().startOf("day"),
+    endDate: moment().startOf("day").add(2, "day"),
+    locale: {
+      format: "M/DD/YYYY",
+    },
+  });
+</script>
+
+{% endblock %} 
+{% block home-sub-marquee-home-container %} 
+{% endblock %}
